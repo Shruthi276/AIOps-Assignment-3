@@ -1,0 +1,26 @@
+services:
+  ray-head:
+    image: dueling-cluster
+    container_name: ray-head
+    hostname: ray-head
+    shm_size: 2gb
+    command:  ray start --head --port=6379 --dashboard-host=0.0.0.0 --dashboard-port=8265 --include-dashboard=true --num-cpus=0 --block            
+    volumes: [".:/workspace"]
+
+  ray-worker-1:
+    image: dueling-cluster
+    container_name: ray-worker-1
+    hostname: ray-worker-1
+    shm_size: 2gb
+    depends_on: [ray-head]
+    command: ray start --address=ray-head:6379 --num-cpus=2 --block
+    volumes: [".:/workspace"]
+
+  ray-worker-2:
+    image: dueling-cluster
+    container_name: ray-worker-2
+    hostname: ray-worker-2
+    shm_size: 2gb
+    depends_on: [ray-head]
+    command: ray start --address=ray-head:6379 --num-cpus=2 --block
+    volumes: [".:/workspace"] 
